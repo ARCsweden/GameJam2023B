@@ -18,6 +18,8 @@ public class Player : MonoBehaviour
 
     [SerializeField]
     GameObject SplatEffect;
+    [SerializeField]
+    GameObject SplatEffectBlood;
 
     public Material playerMat;
 
@@ -87,8 +89,10 @@ public class Player : MonoBehaviour
     {
         ExitAnim = true;
         exploded = false;
-        transform.position = new Vector3(FindAnyObjectByType<Camera>().transform.position.x, -3, transform.position.z);
+        transform.position = new Vector3(FindAnyObjectByType<Camera>().transform.position.x, -10, transform.position.z);
         Orientation = -1;
+        transform.localScale = new Vector3(1, Orientation, 1);
+        timer = 0;
         playerMat.SetColor("_Color", color);
         Alive = true;
     }
@@ -237,37 +241,41 @@ public class Player : MonoBehaviour
 
     private void OnJump(InputValue input)
     {
-        //Debug.Log("Jump: " + input.Get<float>());
-        if (Grounded)
+        if (Alive)
         {
-            playerRigidbody.AddForce(new Vector3(0, JumpPower*Orientation,0));
+            //Debug.Log("Jump: " + input.Get<float>());
+            if (Grounded)
+            {
+                playerRigidbody.AddForce(new Vector3(0, JumpPower * Orientation, 0));
+            }
+            else if (WalledRight)
+            {
+                if (ForceXActive < 0)
+                {
+                    playerRigidbody.AddForce(-Vector3.right * JumpPower + new Vector3(0, JumpPower * Orientation, 0));
+                }
+                else
+                {
+                    playerRigidbody.AddForce(-Vector3.right * JumpPower * 0.25f + new Vector3(0, JumpPower * Orientation * 1.2f, 0));
+                }
+            }
+            else if (WalledLeft)
+            {
+                if (ForceXActive > 0)
+                {
+                    playerRigidbody.AddForce(Vector3.right * JumpPower + new Vector3(0, JumpPower * Orientation, 0));
+                }
+                else
+                {
+                    playerRigidbody.AddForce(Vector3.right * JumpPower * 0.2f + new Vector3(0, JumpPower * Orientation * 1.2f, 0));
+                }
+            }
+            else if (Roofied)
+            {
+                playerRigidbody.AddForce(new Vector3(0, -JumpPower * Orientation / 2, 0));
+            }
         }
-        else if (WalledRight)
-        {
-            if (ForceXActive < 0)
-            {
-                playerRigidbody.AddForce(-Vector3.right * JumpPower + new Vector3(0, JumpPower * Orientation, 0));
-            }
-            else
-            {
-                playerRigidbody.AddForce(-Vector3.right * JumpPower*0.25f + new Vector3(0, JumpPower * Orientation* 1.2f, 0));
-            }
-        }
-        else if (WalledLeft)
-        {
-            if (ForceXActive > 0)
-            {
-                playerRigidbody.AddForce(Vector3.right * JumpPower + new Vector3(0, JumpPower * Orientation, 0));
-            }
-            else
-            {
-                playerRigidbody.AddForce(Vector3.right * JumpPower * 0.2f + new Vector3(0, JumpPower * Orientation*1.2f, 0));
-            }
-        }  
-        else if (Roofied)
-        {
-            playerRigidbody.AddForce(new Vector3(0, -JumpPower * Orientation/2, 0));
-        }
+        
 
     }
 
@@ -309,6 +317,17 @@ public class Player : MonoBehaviour
     private void OnRespawn(InputValue input)
     {
         Alive = false;
+    }
+
+    private void OnCollisionEnter(Collision collision)
+    {
+        if (collision.collider.GetComponent<HumanPrefab>())
+        {
+            GameObject DeathSplatEffectBlood = GameObject.Instantiate(SplatEffectBlood, FindAnyObjectByType<Camera>().transform);
+            DeathSplatEffectBlood.transform.position = collision.transform.position + new Vector3(0, 1, 0);
+            Destroy(collision.collider.gameObject);
+            playerRigidbody.AddForce(new Vector3(Speed*50,0,0));
+        }
     }
 
 }

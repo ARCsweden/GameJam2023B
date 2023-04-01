@@ -60,9 +60,12 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   RespawnTime: 5
+  color: {r: 0, g: 0, b: 0, a: 0}
   maxSpeed: 30
   Alive: 1
   SplatEffect: {fileID: 2845858498406706757, guid: bca482f5642d9ac449e1f94b732912a7,
+    type: 3}
+  SplatEffectBlood: {fileID: 2845858498406706757, guid: 4ba315189965c394d89931d9f9dc7ccb,
     type: 3}
   playerMat: {fileID: 0}
   playerSprite: {fileID: 4372574954418157781}

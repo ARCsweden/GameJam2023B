@@ -11,7 +11,7 @@ GameObject:
   - component: {fileID: 3063845707523613198}
   - component: {fileID: 6825041550452558384}
   - component: {fileID: 2716734043053612317}
-  m_Layer: 0
+  m_Layer: 7
   m_Name: Sprite
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -119,7 +119,7 @@ GameObject:
   - component: {fileID: 1350987992197887510}
   - component: {fileID: 6088792439699564078}
   - component: {fileID: 4060256242206574178}
-  m_Layer: 0
+  m_Layer: 7
   m_Name: HumanPrefab
   m_TagString: Untagged
   m_Icon: {fileID: 0}

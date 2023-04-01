@@ -24,7 +24,7 @@ public class HumanPrefab : MonoBehaviour
         if(Panic)
         {
             // TODO: away from player
-            rigidBody.velocity = new Vector3(Speed, 0, 0);
+            rigidBody.velocity = new Vector3(Speed, rigidBody.velocity.y, 0);
         } else
         {
             rigidBody.velocity = new Vector3(0, rigidBody.velocity.y, 0);
