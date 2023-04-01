@@ -24,6 +24,9 @@ public class Player : MonoBehaviour
     Rigidbody playerRigidbody;
 
     [SerializeField]
+    public Animator animator;
+
+    [SerializeField]
     float shiftCooldown;
 
     [SerializeField]
@@ -50,7 +53,7 @@ public class Player : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
-        
+
     }
 
     private void FixedUpdate()
@@ -61,6 +64,9 @@ public class Player : MonoBehaviour
             Debug.Log("Ground found!");
             targetDisplay.position = hitground.point + new Vector3(0, 0, -5);
             Grounded = true;
+            WalledRight = false;
+            WalledLeft = false;
+            Roofied = false;
         }
         else
         {
@@ -137,6 +143,11 @@ public class Player : MonoBehaviour
         {
             transform.rotation = Quaternion.Euler(0, 180, 0);
         }
+
+        animator.SetFloat("YVel", playerRigidbody.velocity.y * Orientation);
+        animator.SetBool("Grounded", Grounded);
+        animator.SetBool("Roofied", Roofied);
+        animator.SetBool("Walled", WalledLeft || WalledRight);
     }
 
 
