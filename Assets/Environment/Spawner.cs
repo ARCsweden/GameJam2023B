@@ -24,7 +24,7 @@ public class Spawner : MonoBehaviour
     {
         buildings = Resources.LoadAll<GameObject>("Buildings");
         lastSpawn = transform.position.x;
-        newSpawnIn = Random.Range(minSpawnRange, maxSpawnRange);
+        newSpawnIn = 1;
     }
 
     // Update is called once per frame

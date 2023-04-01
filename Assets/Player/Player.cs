@@ -5,7 +5,20 @@ using UnityEngine.InputSystem;
 
 public class Player : MonoBehaviour
 {
+    [SerializeField]
+    float maxSpeed;
+
     public bool Alive;
+
+    bool exploded;
+
+    [SerializeField]
+    GameObject SplatEffect;
+
+    public Material playerMat;
+
+    [SerializeField]
+    SpriteRenderer playerSprite;
 
     bool ExitAnim;
 
@@ -56,6 +69,9 @@ public class Player : MonoBehaviour
     void Start()
     {
         ExitAnim = true;
+        playerMat = playerSprite.material;
+        playerMat.SetColor("_Color",Random.ColorHSV(0,1,0.5f,1,0.75f,1,1,1));
+        exploded = false;
     }
 
     // Update is called once per frame
@@ -66,110 +82,130 @@ public class Player : MonoBehaviour
 
     private void FixedUpdate()
     {
-        RaycastHit hitground;
-        if (Physics.SphereCast(transform.position, 0.75f, -transform.up * Orientation, out hitground, 0.4f))
+        if (Alive)
         {
-            //Debug.Log("Ground found!");
-            targetDisplay.position = hitground.point + new Vector3(0, 0, -5);
-            Grounded = true;
-            WalledRight = false;
-            WalledLeft = false;
-            Roofied = false;
-        }
-        else
-        {
-            RaycastHit hitroof;
-            if (Physics.SphereCast(transform.position, 0.75f, transform.up * Orientation, out hitroof, 0.4f))
+            RaycastHit hitground;
+            if (Physics.SphereCast(transform.position, 0.4f, -transform.up * Orientation, out hitground, 1))
             {
-                //Debug.Log("Roof found!");
-                targetDisplay.position = hitroof.point + new Vector3(0, 0, -5);
-                Roofied = true;
+                //Debug.Log("Ground found!");
+                targetDisplay.position = hitground.point + new Vector3(0, 0, -5);
+                Grounded = true;
+                WalledRight = false;
+                WalledLeft = false;
+                Roofied = false;
             }
             else
             {
-                RaycastHit hitwallback;
-                RaycastHit hitwallfront;
-                if (Physics.SphereCast(transform.position, 0.2f, Vector3.right, out hitwallback, 0.5f))
+                RaycastHit hitroof;
+                if (Physics.SphereCast(transform.position, 0.4f, transform.up * Orientation, out hitroof, 1))
                 {
-                    //Debug.Log("Wall found behind!");
-                    targetDisplay.position = hitwallback.point+new Vector3(0,0,-5);
-                    WalledRight = true;
-                    Grounded = false;
-                    WalledLeft = false;
-                    Roofied = false;
-                }
-                else if (Physics.SphereCast(transform.position, 0.2f, -Vector3.right, out hitwallfront, 0.5f))
-                {
-                    //Debug.Log("Wall found in front!");
-                    targetDisplay.position = hitwallfront.point + new Vector3(0, 0, -5);
-                    WalledLeft = true;
-                    Grounded = false;
-                    WalledRight = false;
-                    Roofied = false;
+                    //Debug.Log("Roof found!");
+                    targetDisplay.position = hitroof.point + new Vector3(0, 0, -5);
+                    Roofied = true;
                 }
                 else
                 {
-                    //Debug.Log("Airborn");
-                    targetDisplay.position = new Vector3(0, 100, 0);
-                    Grounded = false;
-                    WalledRight = false;
-                    WalledLeft = false;
-                    Roofied = false;
+                    RaycastHit hitwallback;
+                    RaycastHit hitwallfront;
+                    if (Physics.SphereCast(transform.position, 0.4f, Vector3.right, out hitwallback, 0.3f))
+                    {
+                        //Debug.Log("Wall found behind!");
+                        targetDisplay.position = hitwallback.point + new Vector3(0, 0, -5);
+                        WalledRight = true;
+                        Grounded = false;
+                        WalledLeft = false;
+                        Roofied = false;
+                    }
+                    else if (Physics.SphereCast(transform.position, 0.4f, -Vector3.right, out hitwallfront, 0.3f))
+                    {
+                        //Debug.Log("Wall found in front!");
+                        targetDisplay.position = hitwallfront.point + new Vector3(0, 0, -5);
+                        WalledLeft = true;
+                        Grounded = false;
+                        WalledRight = false;
+                        Roofied = false;
+                    }
+                    else
+                    {
+                        //Debug.Log("Airborn");
+                        targetDisplay.position = new Vector3(0, 100, 0);
+                        Grounded = false;
+                        WalledRight = false;
+                        WalledLeft = false;
+                        Roofied = false;
+                    }
+
                 }
-                
+
             }
-                
-        }
 
-        if (Grounded || Roofied)
-        {
-            ForceX = ForceXActive;
-        }
-        else
-        {
-            ForceX = ForceXActive*0.2f;
-        }
-
-
-
-        if (Roofied)
-        {
-            force = new Vector3(ForceX, -Orientation*Gravity, 0);
-        }
-        else
-        {
-            force = new Vector3(ForceX, Orientation * Gravity, 0);
-        }
-            
-        playerRigidbody.AddForce(force);
-
-
-        if (timer < shiftCooldown)
-        {
-            timer += Time.deltaTime;
-
-            if (timer > 0.2f && ExitAnim)
+            if (Grounded || Roofied)
             {
-                GameObject newSprite = GameObject.Instantiate(WarpSpritePrefab);
-                newSprite.transform.position = transform.position;
-                ExitAnim = false;
+                ForceX = ForceXActive;
             }
+            else
+            {
+                ForceX = ForceXActive * 0.2f;
+            }
+
+
+
+            if (Roofied)
+            {
+                force = new Vector3(ForceX, -Orientation * Gravity, 0);
+            }
+            else
+            {
+                force = new Vector3(ForceX, Orientation * Gravity, 0);
+            }
+
+            playerRigidbody.AddForce(force);
+
+
+            if (timer < shiftCooldown)
+            {
+                timer += Time.deltaTime;
+
+                if (timer > 0.2f && ExitAnim)
+                {
+                    GameObject newSprite = GameObject.Instantiate(WarpSpritePrefab);
+                    newSprite.transform.position = transform.position;
+                    ExitAnim = false;
+                }
+            }
+
+
+            if (ForceXActive > 0)
+            {
+                transform.rotation = Quaternion.Euler(0, 0, 0);
+            }
+            else if (ForceXActive < 0)
+            {
+                transform.rotation = Quaternion.Euler(0, 180, 0);
+            }
+
+            animator.SetFloat("YVel", playerRigidbody.velocity.y * Orientation);
+            animator.SetBool("Grounded", Grounded);
+            animator.SetBool("Roofied", Roofied);
+            animator.SetBool("Walled", WalledLeft || WalledRight);
         }
-
-
-        if (ForceXActive > 0)
+        else
         {
-            transform.rotation = Quaternion.Euler(0, 0, 0);
-        }
-        else if (ForceXActive < 0)
-        {
-            transform.rotation = Quaternion.Euler(0, 180, 0);
+            if (!exploded)
+            {
+                GameObject DeathSplatEffect = GameObject.Instantiate(SplatEffect,FindAnyObjectByType<Camera>().transform);
+                DeathSplatEffect.transform.position = transform.position + new Vector3(0, 1, 0);
+                playerMat.SetColor("_Color", new Vector4(0,0,0,0));
+                playerRigidbody.velocity = new Vector3(0,0,0);
+                exploded = true;
+            }
+            
         }
 
-        animator.SetFloat("YVel", playerRigidbody.velocity.y * Orientation);
-        animator.SetBool("Grounded", Grounded);
-        animator.SetBool("Roofied", Roofied);
-        animator.SetBool("Walled", WalledLeft || WalledRight);
+        if (playerRigidbody.velocity.magnitude > maxSpeed) 
+        {
+            playerRigidbody.velocity = new Vector3(Mathf.Min(playerRigidbody.velocity.x, maxSpeed), Mathf.Min(playerRigidbody.velocity.y, maxSpeed), 0);
+        }
     }
 
 
@@ -195,7 +231,7 @@ public class Player : MonoBehaviour
             }
             else
             {
-                playerRigidbody.AddForce(-Vector3.right * JumpPower*0.25f + new Vector3(0, JumpPower * Orientation, 0));
+                playerRigidbody.AddForce(-Vector3.right * JumpPower*0.25f + new Vector3(0, JumpPower * Orientation* 1.5f, 0));
             }
         }
         else if (WalledLeft)
@@ -206,7 +242,7 @@ public class Player : MonoBehaviour
             }
             else
             {
-                playerRigidbody.AddForce(Vector3.right * JumpPower * 0.2f + new Vector3(0, JumpPower * Orientation, 0));
+                playerRigidbody.AddForce(Vector3.right * JumpPower * 0.2f + new Vector3(0, JumpPower * Orientation*1.5f, 0));
             }
         }  
         else if (Roofied)
