@@ -5,6 +5,10 @@ using UnityEngine.InputSystem;
 
 public class Player : MonoBehaviour
 {
+    public float RespawnTime;
+
+    public Color color;
+
     [SerializeField]
     float maxSpeed;
 
@@ -68,16 +72,25 @@ public class Player : MonoBehaviour
     // Start is called before the first frame update
     void Start()
     {
-        ExitAnim = true;
+        color = Random.ColorHSV(0, 1, 0.5f, 1, 0.75f, 1, 1, 1);
         playerMat = playerSprite.material;
-        playerMat.SetColor("_Color",Random.ColorHSV(0,1,0.5f,1,0.75f,1,1,1));
-        exploded = false;
+        SetupPlayer();
     }
 
     // Update is called once per frame
     void Update()
     {
 
+    }
+
+    void SetupPlayer()
+    {
+        ExitAnim = true;
+        exploded = false;
+        transform.position = new Vector3(FindAnyObjectByType<Camera>().transform.position.x, -3, transform.position.z);
+        Orientation = -1;
+        playerMat.SetColor("_Color", color);
+        Alive = true;
     }
 
     private void FixedUpdate()
@@ -97,7 +110,7 @@ public class Player : MonoBehaviour
             else
             {
                 RaycastHit hitroof;
-                if (Physics.SphereCast(transform.position, 0.4f, transform.up * Orientation, out hitroof, 1))
+                if (Physics.SphereCast(transform.position, 0.2f, transform.up * Orientation, out hitroof, 0.9f))
                 {
                     //Debug.Log("Roof found!");
                     targetDisplay.position = hitroof.point + new Vector3(0, 0, -5);
@@ -198,8 +211,14 @@ public class Player : MonoBehaviour
                 playerMat.SetColor("_Color", new Vector4(0,0,0,0));
                 playerRigidbody.velocity = new Vector3(0,0,0);
                 exploded = true;
+                timer = 0;
             }
-            
+
+            timer += Time.deltaTime;
+            if (timer > RespawnTime)
+            {
+                SetupPlayer();
+            }
         }
 
         if (playerRigidbody.velocity.magnitude > maxSpeed) 
@@ -231,7 +250,7 @@ public class Player : MonoBehaviour
             }
             else
             {
-                playerRigidbody.AddForce(-Vector3.right * JumpPower*0.25f + new Vector3(0, JumpPower * Orientation* 1.5f, 0));
+                playerRigidbody.AddForce(-Vector3.right * JumpPower*0.25f + new Vector3(0, JumpPower * Orientation* 1.2f, 0));
             }
         }
         else if (WalledLeft)
@@ -242,7 +261,7 @@ public class Player : MonoBehaviour
             }
             else
             {
-                playerRigidbody.AddForce(Vector3.right * JumpPower * 0.2f + new Vector3(0, JumpPower * Orientation*1.5f, 0));
+                playerRigidbody.AddForce(Vector3.right * JumpPower * 0.2f + new Vector3(0, JumpPower * Orientation*1.2f, 0));
             }
         }  
         else if (Roofied)
@@ -285,6 +304,11 @@ public class Player : MonoBehaviour
             transform.localScale = new Vector3(1, Orientation,1);
             timer = 0;
         }
+    }
+
+    private void OnRespawn(InputValue input)
+    {
+        Alive = false;
     }
 
 }

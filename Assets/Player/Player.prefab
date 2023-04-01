@@ -59,6 +59,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 02dcf5457fd25b14c8fa03670d6cc692, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  RespawnTime: 5
   maxSpeed: 30
   Alive: 1
   SplatEffect: {fileID: 2845858498406706757, guid: bca482f5642d9ac449e1f94b732912a7,
