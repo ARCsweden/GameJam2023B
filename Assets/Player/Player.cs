@@ -12,7 +12,13 @@ public class Player : MonoBehaviour
     bool Grounded;
 
     [SerializeField]
-    bool Walled;
+    bool WalledRight;
+
+    [SerializeField]
+    bool WalledLeft;
+
+    [SerializeField]
+    bool Roofied;
 
     [SerializeField]
     Rigidbody playerRigidbody;
@@ -53,53 +59,70 @@ public class Player : MonoBehaviour
         if (Physics.SphereCast(transform.position, 0.75f, -transform.up * Orientation, out hitground, 0.4f))
         {
             Debug.Log("Ground found!");
-            targetDisplay.position = hitground.point;
+            targetDisplay.position = hitground.point + new Vector3(0, 0, -5);
             Grounded = true;
         }
         else
         {
-            
+            RaycastHit hitroof;
+            if (Physics.SphereCast(transform.position, 0.75f, transform.up * Orientation, out hitroof, 0.4f))
+            {
+                Debug.Log("Roof found!");
+                targetDisplay.position = hitroof.point + new Vector3(0, 0, -5);
+                Roofied = true;
+            }
             else
             {
                 RaycastHit hitwallback;
-                if (Physics.SphereCast(transform.position, 0.2f, -transform.right, out hitwallback, 0.5f))
+                RaycastHit hitwallfront;
+                if (Physics.SphereCast(transform.position, 0.2f, Vector3.right, out hitwallback, 0.5f))
                 {
                     Debug.Log("Wall found behind!");
-                    targetDisplay.position = hitwallback.point;
-                    Walled = true;
+                    targetDisplay.position = hitwallback.point+new Vector3(0,0,-5);
+                    WalledRight = true;
+                }
+                else if (Physics.SphereCast(transform.position, 0.2f, -Vector3.right, out hitwallfront, 0.5f))
+                {
+                    Debug.Log("Wall found in front!");
+                    targetDisplay.position = hitwallfront.point + new Vector3(0, 0, -5);
+                    WalledLeft = true;
                 }
                 else
                 {
                     Debug.Log("Airborn");
                     targetDisplay.position = new Vector3(0, 100, 0);
                     Grounded = false;
-                    Walled = false;
+                    WalledRight = false;
+                    WalledLeft = false;
+                    Roofied = false;
                 }
                 
             }
                 
         }
 
-        if (Grounded)
+        if (Grounded || Roofied)
         {
             ForceX = ForceXActive;
         }
         else
         {
-            ForceX = ForceXActive*0.3f;
+            ForceX = ForceXActive*0.2f;
         }
 
 
-        if (transform.position.y > 0)
+
+        if (Roofied)
         {
-            force = new Vector3(ForceX, Orientation*Gravity, 0);
-            playerRigidbody.AddForce(force);
+            force = new Vector3(ForceX, -Orientation*Gravity, 0);
         }
         else
         {
-            force = new Vector3(ForceX, Orientation*Gravity, 0);
-            playerRigidbody.AddForce(force);
+            force = new Vector3(ForceX, Orientation * Gravity, 0);
         }
+            
+        playerRigidbody.AddForce(force);
+
 
         if (timer < shiftCooldown)
         {
@@ -133,6 +156,19 @@ public class Player : MonoBehaviour
         {
             playerRigidbody.AddForce(new Vector3(0, JumpPower*Orientation,0));
         }
+        else if (WalledRight)
+        {
+            playerRigidbody.AddForce(-Vector3.right * JumpPower + new Vector3(0, JumpPower * Orientation, 0));
+        }
+        else if (WalledLeft)
+        {
+            playerRigidbody.AddForce(Vector3.right * JumpPower + new Vector3(0, JumpPower * Orientation, 0));
+        }
+        else if (Roofied)
+        {
+            playerRigidbody.AddForce(new Vector3(0, -JumpPower * Orientation/2, 0));
+        }
+
     }
 
 
@@ -151,6 +187,7 @@ public class Player : MonoBehaviour
             {
                 Orientation = -1;
                 transform.position = new Vector3(transform.position.x, -Mathf.Abs(transform.position.y), transform.position.z);
+                
                 //playerRigidbody.velocity = new Vector3(playerRigidbody.velocity.x, -playerRigidbody.velocity.y, playerRigidbody.velocity.z);
             }
             else
@@ -160,7 +197,7 @@ public class Player : MonoBehaviour
                 //playerRigidbody.velocity = new Vector3(playerRigidbody.velocity.x, -playerRigidbody.velocity.y, playerRigidbody.velocity.z);
             }
             
-            //transform.localScale = new Vector3(transform.localScale.x, Orientation*transform.localScale.y, transform.localScale.z);
+            transform.localScale = new Vector3(1, Orientation,1);
             timer = 0;
         }    
     }
