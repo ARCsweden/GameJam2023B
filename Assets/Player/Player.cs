@@ -5,6 +5,14 @@ using UnityEngine.InputSystem;
 
 public class Player : MonoBehaviour
 {
+    public bool Alive;
+
+    bool ExitAnim;
+
+    [SerializeField]
+    GameObject WarpSpritePrefab;
+
+
     [SerializeField]
     int Orientation = 1;
 
@@ -47,7 +55,7 @@ public class Player : MonoBehaviour
     // Start is called before the first frame update
     void Start()
     {
-        
+        ExitAnim = true;
     }
 
     // Update is called once per frame
@@ -61,7 +69,7 @@ public class Player : MonoBehaviour
         RaycastHit hitground;
         if (Physics.SphereCast(transform.position, 0.75f, -transform.up * Orientation, out hitground, 0.4f))
         {
-            Debug.Log("Ground found!");
+            //Debug.Log("Ground found!");
             targetDisplay.position = hitground.point + new Vector3(0, 0, -5);
             Grounded = true;
             WalledRight = false;
@@ -73,7 +81,7 @@ public class Player : MonoBehaviour
             RaycastHit hitroof;
             if (Physics.SphereCast(transform.position, 0.75f, transform.up * Orientation, out hitroof, 0.4f))
             {
-                Debug.Log("Roof found!");
+                //Debug.Log("Roof found!");
                 targetDisplay.position = hitroof.point + new Vector3(0, 0, -5);
                 Roofied = true;
             }
@@ -83,19 +91,25 @@ public class Player : MonoBehaviour
                 RaycastHit hitwallfront;
                 if (Physics.SphereCast(transform.position, 0.2f, Vector3.right, out hitwallback, 0.5f))
                 {
-                    Debug.Log("Wall found behind!");
+                    //Debug.Log("Wall found behind!");
                     targetDisplay.position = hitwallback.point+new Vector3(0,0,-5);
                     WalledRight = true;
+                    Grounded = false;
+                    WalledLeft = false;
+                    Roofied = false;
                 }
                 else if (Physics.SphereCast(transform.position, 0.2f, -Vector3.right, out hitwallfront, 0.5f))
                 {
-                    Debug.Log("Wall found in front!");
+                    //Debug.Log("Wall found in front!");
                     targetDisplay.position = hitwallfront.point + new Vector3(0, 0, -5);
                     WalledLeft = true;
+                    Grounded = false;
+                    WalledRight = false;
+                    Roofied = false;
                 }
                 else
                 {
-                    Debug.Log("Airborn");
+                    //Debug.Log("Airborn");
                     targetDisplay.position = new Vector3(0, 100, 0);
                     Grounded = false;
                     WalledRight = false;
@@ -133,7 +147,15 @@ public class Player : MonoBehaviour
         if (timer < shiftCooldown)
         {
             timer += Time.deltaTime;
+
+            if (timer > 0.2f && ExitAnim)
+            {
+                GameObject newSprite = GameObject.Instantiate(WarpSpritePrefab);
+                newSprite.transform.position = transform.position;
+                ExitAnim = false;
+            }
         }
+
 
         if (ForceXActive > 0)
         {
@@ -161,20 +183,32 @@ public class Player : MonoBehaviour
     private void OnJump(InputValue input)
     {
         //Debug.Log("Jump: " + input.Get<float>());
-
-        RaycastHit hit;
         if (Grounded)
         {
             playerRigidbody.AddForce(new Vector3(0, JumpPower*Orientation,0));
         }
         else if (WalledRight)
         {
-            playerRigidbody.AddForce(-Vector3.right * JumpPower + new Vector3(0, JumpPower * Orientation, 0));
+            if (ForceXActive < 0)
+            {
+                playerRigidbody.AddForce(-Vector3.right * JumpPower + new Vector3(0, JumpPower * Orientation, 0));
+            }
+            else
+            {
+                playerRigidbody.AddForce(-Vector3.right * JumpPower*0.25f + new Vector3(0, JumpPower * Orientation, 0));
+            }
         }
         else if (WalledLeft)
         {
-            playerRigidbody.AddForce(Vector3.right * JumpPower + new Vector3(0, JumpPower * Orientation, 0));
-        }
+            if (ForceXActive > 0)
+            {
+                playerRigidbody.AddForce(Vector3.right * JumpPower + new Vector3(0, JumpPower * Orientation, 0));
+            }
+            else
+            {
+                playerRigidbody.AddForce(Vector3.right * JumpPower * 0.2f + new Vector3(0, JumpPower * Orientation, 0));
+            }
+        }  
         else if (Roofied)
         {
             playerRigidbody.AddForce(new Vector3(0, -JumpPower * Orientation/2, 0));
@@ -194,8 +228,12 @@ public class Player : MonoBehaviour
         //Debug.Log("Shift: " + input.Get<float>());
         if (timer >= shiftCooldown)
         {
+            GameObject newSprite = GameObject.Instantiate(WarpSpritePrefab);
+            newSprite.transform.position = transform.position;
+            ExitAnim = true;
             if (Orientation == 1)
             {
+                
                 Orientation = -1;
                 transform.position = new Vector3(transform.position.x, -Mathf.Abs(transform.position.y), transform.position.z);
                 
@@ -207,10 +245,10 @@ public class Player : MonoBehaviour
                 transform.position = new Vector3(transform.position.x, Mathf.Abs(transform.position.y), transform.position.z);
                 //playerRigidbody.velocity = new Vector3(playerRigidbody.velocity.x, -playerRigidbody.velocity.y, playerRigidbody.velocity.z);
             }
-            
+
             transform.localScale = new Vector3(1, Orientation,1);
             timer = 0;
-        }    
+        }
     }
 
 }
