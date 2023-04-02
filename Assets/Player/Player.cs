@@ -74,6 +74,8 @@ public class Player : MonoBehaviour
 
     CheckSpawn spawnchecker;
 
+    public bool IsInitialized { get; private set; }
+
     // Start is called before the first frame update
     void Start()
     {
@@ -93,6 +95,7 @@ public class Player : MonoBehaviour
             Alive = false;
             timer = RespawnTime / 3;
         }
+        IsInitialized = true;
     }
 
     // Update is called once per frame
