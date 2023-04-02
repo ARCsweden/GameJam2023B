@@ -82,7 +82,7 @@ public class Player : MonoBehaviour
 
     public bool IsInitialized { get; private set; }
 
-    int score = 0;
+    public int score = 0;
     public PlayerScorePrefab playerScorePrefab;
 
     // Start is called before the first frame update
@@ -344,13 +344,13 @@ public class Player : MonoBehaviour
         {
             Vector3 checkposfrom = new Vector3(transform.position.x, -(transform.position.y-(0.35f*Orientation)), 0);
             Vector3 checkposto = checkposfrom - new Vector3(0, 0.8f, 0) * Orientation;
-            Debug.Log("Player pos: " + transform.position + "  checkposfrom: " + checkposfrom + "  checkposto: " + checkposto);
+            //Debug.Log("Player pos: " + transform.position + "  checkposfrom: " + checkposfrom + "  checkposto: " + checkposto);
             int layermask = ~LayerMask.GetMask("Human");
 
             if (Physics.OverlapCapsule(checkposfrom, checkposto, 0.5f, layermask).Length == 0)
             {
                 Debug.DrawLine(checkposfrom+new Vector3(0,0,-10), checkposto + new Vector3(0, 0, -10), Color.green,3);
-                Debug.Log("Found Shift position");
+                //Debug.Log("Found Shift position");
                 GameObject newSprite = GameObject.Instantiate(WarpSpritePrefab);
                 newSprite.transform.position = transform.position;
                 ExitAnim = true;
@@ -374,7 +374,7 @@ public class Player : MonoBehaviour
             }
             else
             {
-                Debug.Log("Can't shift into (" + Physics.OverlapCapsule(checkposfrom, checkposto, 0.5f).Length + "): " + Physics.OverlapCapsule(checkposfrom, checkposto, 0.5f)[0].name);
+                //Debug.Log("Can't shift into (" + Physics.OverlapCapsule(checkposfrom, checkposto, 0.5f).Length + "): " + Physics.OverlapCapsule(checkposfrom, checkposto, 0.5f)[0].name);
                 Debug.DrawLine(checkposfrom + new Vector3(0, 0, -10), checkposto + new Vector3(0, 0, -10), Color.red, 3);
                 GameObject newSprite = GameObject.Instantiate(WarpSpritePrefab);
                 newSprite.transform.position = transform.position;

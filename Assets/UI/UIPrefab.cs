@@ -8,6 +8,7 @@ public class UIPrefab : MonoBehaviour
 {
     public GameObject UIContainer;
     public PlayerScorePrefab playerScorePrefab;
+    public Winner winner;
 
     const int playerHeight = 30;
 
@@ -43,6 +44,7 @@ public class UIPrefab : MonoBehaviour
         Player player = playerInput.gameObject.GetComponent<Player>();
         player.playerScorePrefab = scoreUI;
         yield return new WaitUntil(() => player.IsInitialized);
+        winner.RegisterPlayer(player);
         avatarMaterial.SetColor("_Color", player.color);
         image.material = avatarMaterial;
     }

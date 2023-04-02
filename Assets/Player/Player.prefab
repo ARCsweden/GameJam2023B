@@ -183,6 +183,7 @@ MonoBehaviour:
   Speed: 20
   JumpPower: 500
   Gravity: -9.82
+  score: 0
   playerScorePrefab: {fileID: 0}
 --- !u!136 &530427666511732345
 CapsuleCollider:
@@ -262,7 +263,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 1
+  m_IsActive: 0
 --- !u!4 &5962300081552804895
 Transform:
   m_ObjectHideFlags: 0
