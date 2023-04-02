@@ -71,12 +71,15 @@ public class Player : MonoBehaviour
 
     float timer;
 
+    public bool IsInitialized { get; private set; }
+
     // Start is called before the first frame update
     void Start()
     {
         color = Random.ColorHSV(0, 1, 0.5f, 1, 0.75f, 1, 1, 1);
         playerMat = playerSprite.material;
         SetupPlayer();
+        IsInitialized = true;
     }
 
     // Update is called once per frame
