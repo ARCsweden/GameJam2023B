@@ -88,7 +88,7 @@ public class Player : MonoBehaviour
 
         if (spawnpoint != new Vector3(0, 0, 0))
         {
-            SetupPlayer(spawnpoint.y);
+            SetupPlayer(spawnpoint.x, spawnpoint.y);
         }
         else
         {
@@ -104,12 +104,12 @@ public class Player : MonoBehaviour
 
     }
 
-    void SetupPlayer(float atPoint)
+    void SetupPlayer(float xPoint,float atPoint)
     {
         Alive = true;
         ExitAnim = true;
         exploded = false;
-        transform.position = new Vector3(mainCameraTransform.position.x, atPoint, 0);
+        transform.position = new Vector3(xPoint, atPoint, 0);
         Orientation = -1;
         transform.localScale = new Vector3(1, Orientation, 1);
         timer = shiftCooldown;
@@ -243,7 +243,7 @@ public class Player : MonoBehaviour
                 Vector3 SpawnPoint = GameObject.FindAnyObjectByType<CheckSpawn>().getSpawnPoint();
                 if (SpawnPoint != new Vector3(0,0,0))
                 {
-                    SetupPlayer(SpawnPoint.y);
+                    SetupPlayer(SpawnPoint.x,SpawnPoint.y);
                 }
                 else
                 {
