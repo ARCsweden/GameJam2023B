@@ -373,6 +373,7 @@ public class Player : MonoBehaviour
             DeathSplatEffectBlood.transform.position = collision.transform.position + new Vector3(0, 1, 0);
             Destroy(collision.collider.gameObject);
             playerRigidbody.AddForce(new Vector3(Speed*50,0,0));
+            animator.SetTrigger("Chomp");
         }
     }
 
