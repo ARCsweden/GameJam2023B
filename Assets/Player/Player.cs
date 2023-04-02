@@ -70,15 +70,31 @@ public class Player : MonoBehaviour
 
 
     float timer;
+    Transform mainCameraTransform;
+
+    CheckSpawn spawnchecker;
 
     public bool IsInitialized { get; private set; }
 
     // Start is called before the first frame update
     void Start()
     {
+        mainCameraTransform = FindAnyObjectByType<Camera>().transform;
         color = Random.ColorHSV(0, 1, 0.5f, 1, 0.75f, 1, 1, 1);
         playerMat = playerSprite.material;
-        SetupPlayer();
+
+        spawnchecker = GameObject.FindAnyObjectByType<CheckSpawn>();
+        Vector3 spawnpoint = spawnchecker.getSpawnPoint();
+
+        if (spawnpoint != new Vector3(0, 0, 0))
+        {
+            SetupPlayer(spawnpoint.y);
+        }
+        else
+        {
+            Alive = false;
+            timer = RespawnTime / 3;
+        }
         IsInitialized = true;
     }
 
@@ -88,16 +104,16 @@ public class Player : MonoBehaviour
 
     }
 
-    void SetupPlayer()
+    void SetupPlayer(float atPoint)
     {
+        Alive = true;
         ExitAnim = true;
         exploded = false;
-        transform.position = new Vector3(FindAnyObjectByType<Camera>().transform.position.x, -10, transform.position.z);
+        transform.position = new Vector3(mainCameraTransform.position.x, atPoint, 0);
         Orientation = -1;
         transform.localScale = new Vector3(1, Orientation, 1);
-        timer = 0;
+        timer = shiftCooldown;
         playerMat.SetColor("_Color", color);
-        Alive = true;
     }
 
     private void FixedUpdate()
@@ -224,7 +240,15 @@ public class Player : MonoBehaviour
             timer += Time.deltaTime;
             if (timer > RespawnTime)
             {
-                SetupPlayer();
+                Vector3 SpawnPoint = GameObject.FindAnyObjectByType<CheckSpawn>().getSpawnPoint();
+                if (SpawnPoint != new Vector3(0,0,0))
+                {
+                    SetupPlayer(SpawnPoint.y);
+                }
+                else
+                {
+                    timer = RespawnTime / 3;
+                }
             }
         }
 
@@ -294,26 +318,45 @@ public class Player : MonoBehaviour
         //Debug.Log("Shift: " + input.Get<float>());
         if (timer >= shiftCooldown)
         {
-            GameObject newSprite = GameObject.Instantiate(WarpSpritePrefab);
-            newSprite.transform.position = transform.position;
-            ExitAnim = true;
-            if (Orientation == 1)
+            Vector3 checkposfrom = new Vector3(transform.position.x, -(transform.position.y-(0.35f*Orientation)), 0);
+            Vector3 checkposto = checkposfrom - new Vector3(0, 0.8f, 0) * Orientation;
+            Debug.Log("Player pos: " + transform.position + "  checkposfrom: " + checkposfrom + "  checkposto: " + checkposto);
+            int layermask = ~LayerMask.GetMask("Human");
+
+            if (Physics.OverlapCapsule(checkposfrom, checkposto, 0.5f, layermask).Length == 0)
             {
-                
-                Orientation = -1;
-                transform.position = new Vector3(transform.position.x, -Mathf.Abs(transform.position.y), transform.position.z);
-                
-                //playerRigidbody.velocity = new Vector3(playerRigidbody.velocity.x, -playerRigidbody.velocity.y, playerRigidbody.velocity.z);
+                Debug.DrawLine(checkposfrom+new Vector3(0,0,-10), checkposto + new Vector3(0, 0, -10), Color.green,3);
+                Debug.Log("Found Shift position");
+                GameObject newSprite = GameObject.Instantiate(WarpSpritePrefab);
+                newSprite.transform.position = transform.position;
+                ExitAnim = true;
+                if (Orientation == 1)
+                {
+
+                    Orientation = -1;
+                    transform.position = new Vector3(transform.position.x, -Mathf.Abs(transform.position.y), transform.position.z);
+
+                    //playerRigidbody.velocity = new Vector3(playerRigidbody.velocity.x, -playerRigidbody.velocity.y, playerRigidbody.velocity.z);
+                }
+                else
+                {
+                    Orientation = 1;
+                    transform.position = new Vector3(transform.position.x, Mathf.Abs(transform.position.y), transform.position.z);
+                    //playerRigidbody.velocity = new Vector3(playerRigidbody.velocity.x, -playerRigidbody.velocity.y, playerRigidbody.velocity.z);
+                }
+
+                transform.localScale = new Vector3(1, Orientation, 1);
+                timer = 0;
             }
             else
             {
-                Orientation = 1;
-                transform.position = new Vector3(transform.position.x, Mathf.Abs(transform.position.y), transform.position.z);
-                //playerRigidbody.velocity = new Vector3(playerRigidbody.velocity.x, -playerRigidbody.velocity.y, playerRigidbody.velocity.z);
+                Debug.Log("Can't shift into (" + Physics.OverlapCapsule(checkposfrom, checkposto, 0.5f).Length + "): " + Physics.OverlapCapsule(checkposfrom, checkposto, 0.5f)[0].name);
+                Debug.DrawLine(checkposfrom + new Vector3(0, 0, -10), checkposto + new Vector3(0, 0, -10), Color.red, 3);
+                GameObject newSprite = GameObject.Instantiate(WarpSpritePrefab);
+                newSprite.transform.position = transform.position;
+                ExitAnim = true;
+                timer = 0;
             }
-
-            transform.localScale = new Vector3(1, Orientation,1);
-            timer = 0;
         }
     }
 
