@@ -161,7 +161,7 @@ MonoBehaviour:
   color: {r: 0, g: 0, b: 0, a: 0}
   shiftTarget: {fileID: 1683608283667508812}
   shiftTargetShader: {fileID: 0}
-  maxSpeed: 30
+  maxSpeed: 20
   Alive: 1
   SplatEffect: {fileID: 2845858498406706757, guid: bca482f5642d9ac449e1f94b732912a7,
     type: 3}
@@ -183,6 +183,7 @@ MonoBehaviour:
   Speed: 20
   JumpPower: 500
   Gravity: -9.82
+  playerScorePrefab: {fileID: 0}
 --- !u!136 &530427666511732345
 CapsuleCollider:
   m_ObjectHideFlags: 0
@@ -190,7 +191,7 @@ CapsuleCollider:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1752417679457055407}
-  m_Material: {fileID: 0}
+  m_Material: {fileID: 13400000, guid: 681612bf8f1a8004fb5df8014201cf00, type: 2}
   m_IsTrigger: 0
   m_Enabled: 1
   m_Radius: 0.5
@@ -212,7 +213,7 @@ Rigidbody:
   m_IsKinematic: 0
   m_Interpolate: 0
   m_Constraints: 120
-  m_CollisionDetection: 0
+  m_CollisionDetection: 2
 --- !u!114 &6170357118893249664
 MonoBehaviour:
   m_ObjectHideFlags: 0

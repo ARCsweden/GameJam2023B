@@ -4,6 +4,9 @@ using UnityEngine;
 
 public class CameraManager : MonoBehaviour
 {
+    [SerializeField]
+    int EndOfLevel;
+
     [SerializeField, Range(0,1)]
     float CameraSpeed;
 
@@ -48,7 +51,15 @@ public class CameraManager : MonoBehaviour
         {
             transform.position = Vector3.Lerp(transform.position, new Vector3(transform.position.x+0.5f, transform.position.y, transform.position.z), CameraSpeed);
         }
-                    
 
+        if (transform.position.x > EndOfLevel)
+        {
+            foreach (var item in Players)
+            {
+                //item.Alive = false;
+                item.gameObject.transform.position = new Vector3(0, item.gameObject.transform.position.y, 0);
+            }
+            transform.position = new Vector3(0, 0, transform.position.z);
+        }
     }
 }

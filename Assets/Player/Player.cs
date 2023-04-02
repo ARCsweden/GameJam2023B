@@ -90,7 +90,7 @@ public class Player : MonoBehaviour
     {
         shiftTargetShader = Shader.Find("Universal Render Pipeline/Lit");
         mainCameraTransform = FindAnyObjectByType<Camera>().transform;
-        color = Random.ColorHSV(0, 1, 0.5f, 1, 0.75f, 1, 1, 1);
+        color = Random.ColorHSV(0, 1, 0.5f, 1, 0.75f, 1, 255, 255);
         playerMat = playerSprite.material;
 
         spawnchecker = GameObject.FindAnyObjectByType<CheckSpawn>();
@@ -133,9 +133,9 @@ public class Player : MonoBehaviour
     {
         if (Alive)
         {
-            
+            int layermask = ~LayerMask.GetMask("Human");
             RaycastHit hitground;
-            if (Physics.SphereCast(transform.position, 0.1f, -transform.up * Orientation, out hitground, 1.5f))
+            if (Physics.SphereCast(transform.position, 0.45f, -transform.up * Orientation, out hitground, 0.7f, layermask))
             {
                 //Debug.Log("Ground found!");
                 targetDisplay.position = hitground.point + new Vector3(0, 0, -5);
@@ -143,35 +143,39 @@ public class Player : MonoBehaviour
                 WalledRight = false;
                 WalledLeft = false;
                 Roofied = false;
+                //Debug.Log(hitground.collider.name);
             }
             else
             {
                 RaycastHit hitroof;
-                if (Physics.SphereCast(transform.position, 0.45f, transform.up * Orientation, out hitroof, 1f))
+                if (Physics.SphereCast(transform.position, 0.4f, transform.up * Orientation, out hitroof, 0.9f,layermask))
                 {
                     //Debug.Log("Roof found!");
                     targetDisplay.position = hitroof.point + new Vector3(0, 0, -5);
+                    Grounded = false;
+                    WalledRight = false;
+                    WalledLeft = false;
                     Roofied = true;
                 }
                 else
                 {
                     RaycastHit hitwallback;
                     RaycastHit hitwallfront;
-                    if (Physics.SphereCast(transform.position, 0.3f, Vector3.right, out hitwallback, 0.3f))
+                    if (Physics.SphereCast(transform.position, 0.2f, Vector3.right, out hitwallback, 0.4f, layermask))
                     {
                         //Debug.Log("Wall found behind!");
                         targetDisplay.position = hitwallback.point + new Vector3(0, 0, -5);
-                        WalledRight = true;
                         Grounded = false;
+                        WalledRight = true;
                         WalledLeft = false;
                         Roofied = false;
                     }
-                    else if (Physics.SphereCast(transform.position, 0.3f, -Vector3.right, out hitwallfront, 0.3f))
+                    else if (Physics.SphereCast(transform.position, 0.2f, -Vector3.right, out hitwallfront, 0.4f, layermask))
                     {
                         //Debug.Log("Wall found in front!");
                         targetDisplay.position = hitwallfront.point + new Vector3(0, 0, -5);
-                        WalledLeft = true;
                         Grounded = false;
+                        WalledLeft = true;
                         WalledRight = false;
                         Roofied = false;
                     }
@@ -195,7 +199,7 @@ public class Player : MonoBehaviour
             }
             else
             {
-                ForceX = ForceXActive * 0.2f;
+                ForceX = ForceXActive * 0.4f;
             }
 
 
