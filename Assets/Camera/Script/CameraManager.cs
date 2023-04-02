@@ -54,8 +54,15 @@ public class CameraManager : MonoBehaviour
 
         if (transform.position.x > EndOfLevel)
         {
+            float EndTimer = 0;
+            while (EndTimer < 30)
+            {
+                EndTimer += Time.deltaTime;
+            }
+
             foreach (var item in Players)
             {
+
                 //item.Alive = false;
                 item.gameObject.transform.position = new Vector3(0, item.gameObject.transform.position.y, 0);
             }
