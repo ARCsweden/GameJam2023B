@@ -132,7 +132,7 @@ public class Player : MonoBehaviour
         {
             
             RaycastHit hitground;
-            if (Physics.SphereCast(transform.position, 0.4f, -transform.up * Orientation, out hitground, 1))
+            if (Physics.SphereCast(transform.position, 0.1f, -transform.up * Orientation, out hitground, 1.5f))
             {
                 //Debug.Log("Ground found!");
                 targetDisplay.position = hitground.point + new Vector3(0, 0, -5);
@@ -144,7 +144,7 @@ public class Player : MonoBehaviour
             else
             {
                 RaycastHit hitroof;
-                if (Physics.SphereCast(transform.position, 0.2f, transform.up * Orientation, out hitroof, 0.9f))
+                if (Physics.SphereCast(transform.position, 0.45f, transform.up * Orientation, out hitroof, 1f))
                 {
                     //Debug.Log("Roof found!");
                     targetDisplay.position = hitroof.point + new Vector3(0, 0, -5);
@@ -154,7 +154,7 @@ public class Player : MonoBehaviour
                 {
                     RaycastHit hitwallback;
                     RaycastHit hitwallfront;
-                    if (Physics.SphereCast(transform.position, 0.4f, Vector3.right, out hitwallback, 0.3f))
+                    if (Physics.SphereCast(transform.position, 0.3f, Vector3.right, out hitwallback, 0.3f))
                     {
                         //Debug.Log("Wall found behind!");
                         targetDisplay.position = hitwallback.point + new Vector3(0, 0, -5);
@@ -163,7 +163,7 @@ public class Player : MonoBehaviour
                         WalledLeft = false;
                         Roofied = false;
                     }
-                    else if (Physics.SphereCast(transform.position, 0.4f, -Vector3.right, out hitwallfront, 0.3f))
+                    else if (Physics.SphereCast(transform.position, 0.3f, -Vector3.right, out hitwallfront, 0.3f))
                     {
                         //Debug.Log("Wall found in front!");
                         targetDisplay.position = hitwallfront.point + new Vector3(0, 0, -5);
@@ -300,7 +300,7 @@ public class Player : MonoBehaviour
                 }
                 else
                 {
-                    playerRigidbody.AddForce(-Vector3.right * JumpPower * 0.25f + new Vector3(0, JumpPower * Orientation * 1.2f, 0));
+                    playerRigidbody.AddForce(-Vector3.right * JumpPower * 0.25f + new Vector3(0, JumpPower * Orientation * 1.35f, 0));
                 }
             }
             else if (WalledLeft)
@@ -311,7 +311,7 @@ public class Player : MonoBehaviour
                 }
                 else
                 {
-                    playerRigidbody.AddForce(Vector3.right * JumpPower * 0.2f + new Vector3(0, JumpPower * Orientation * 1.2f, 0));
+                    playerRigidbody.AddForce(Vector3.right * JumpPower * 0.2f + new Vector3(0, JumpPower * Orientation * 1.35f, 0));
                 }
             }
             else if (Roofied)
