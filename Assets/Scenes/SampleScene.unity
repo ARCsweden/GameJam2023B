@@ -760,6 +760,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 28870a53dac569e4ca3d9d0f4afce2bc, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  timerAtEnd: 15
   EndOfLevel: 1000
   CameraSpeed: 0.067
   Players: []
