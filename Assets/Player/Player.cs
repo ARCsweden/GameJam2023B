@@ -82,6 +82,9 @@ public class Player : MonoBehaviour
 
     public bool IsInitialized { get; private set; }
 
+    int score = 0;
+    public PlayerScorePrefab playerScorePrefab;
+
     // Start is called before the first frame update
     void Start()
     {
@@ -391,6 +394,10 @@ public class Player : MonoBehaviour
             Destroy(collision.collider.gameObject);
             playerRigidbody.AddForce(new Vector3(Speed*50,0,0));
             animator.SetTrigger("Chomp");
+            // Increment score and update UI
+            score++;
+            string scoreString = score.ToString();
+            playerScorePrefab.SetText(scoreString);
         }
     }
 

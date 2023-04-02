@@ -7,7 +7,7 @@ using UnityEngine.UI;
 public class UIPrefab : MonoBehaviour
 {
     public GameObject UIContainer;
-    public GameObject playerScorePrefab;
+    public PlayerScorePrefab playerScorePrefab;
 
     const int playerHeight = 30;
 
@@ -34,13 +34,14 @@ public class UIPrefab : MonoBehaviour
         tf.SetSizeWithCurrentAnchors(RectTransform.Axis.Vertical, numPlayers * playerHeight);
 
         // Create a new scoreboard element and add it to the UI container
-        Player player = playerInput.gameObject.GetComponent<Player>();
         Transform UITransform = UIContainer.transform;
-        GameObject scoreUI = GameObject.Instantiate<GameObject>(playerScorePrefab, UITransform);
+        PlayerScorePrefab scoreUI = PlayerScorePrefab.Instantiate<PlayerScorePrefab>(playerScorePrefab, UITransform);
         //scoreUI.transform.position += new Vector3(0, (numPlayers - 1) * playerHeight, 0);
         Image image = scoreUI.GetComponentInChildren<Image>();
         Material avatarMaterial = new Material(image.material);
         // Player color is not set in Start yet, we have to wait until it is
+        Player player = playerInput.gameObject.GetComponent<Player>();
+        player.playerScorePrefab = scoreUI;
         yield return new WaitUntil(() => player.IsInitialized);
         avatarMaterial.SetColor("_Color", player.color);
         image.material = avatarMaterial;
