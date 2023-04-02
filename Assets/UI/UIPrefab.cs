@@ -39,9 +39,10 @@ public class UIPrefab : MonoBehaviour
         GameObject scoreUI = GameObject.Instantiate<GameObject>(playerScorePrefab, UITransform);
         //scoreUI.transform.position += new Vector3(0, (numPlayers - 1) * playerHeight, 0);
         Image image = scoreUI.GetComponentInChildren<Image>();
-        Material avatarMat = image.material;
+        Material avatarMaterial = new Material(image.material);
         // Player color is not set in Start yet, we have to wait until it is
         yield return new WaitUntil(() => player.IsInitialized);
-        avatarMat.SetColor("_Color", player.color);
+        avatarMaterial.SetColor("_Color", player.color);
+        image.material = avatarMaterial;
     }
 }
