@@ -150,7 +150,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   UIContainer: {fileID: 2428795337994456324}
-  playerScorePrefab: {fileID: 4875708842338749984, guid: 56473c053b23c1345b672e67d4fdca1b,
+  playerScorePrefab: {fileID: 1920144248327671139, guid: 56473c053b23c1345b672e67d4fdca1b,
     type: 3}
 --- !u!1 &2428795338429634335
 GameObject:
