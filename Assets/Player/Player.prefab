@@ -18,7 +18,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 0
+  m_IsActive: 1
 --- !u!4 &5242934114694035176
 Transform:
   m_ObjectHideFlags: 0
@@ -93,7 +93,7 @@ SphereCollider:
   m_GameObject: {fileID: 1683608283667508812}
   m_Material: {fileID: 0}
   m_IsTrigger: 0
-  m_Enabled: 1
+  m_Enabled: 0
   serializedVersion: 2
   m_Radius: 0.5
   m_Center: {x: 0, y: 0, z: 0}
@@ -159,6 +159,8 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   RespawnTime: 5
   color: {r: 0, g: 0, b: 0, a: 0}
+  shiftTarget: {fileID: 1683608283667508812}
+  shiftTargetShader: {fileID: 0}
   maxSpeed: 30
   Alive: 1
   SplatEffect: {fileID: 2845858498406706757, guid: bca482f5642d9ac449e1f94b732912a7,

@@ -10,6 +10,12 @@ public class Player : MonoBehaviour
     public Color color;
 
     [SerializeField]
+    GameObject shiftTarget;
+
+    [SerializeField]
+    Shader shiftTargetShader;
+
+    [SerializeField]
     float maxSpeed;
 
     public bool Alive;
@@ -82,6 +88,7 @@ public class Player : MonoBehaviour
     // Start is called before the first frame update
     void Start()
     {
+        shiftTargetShader = Shader.Find("Universal Render Pipeline/Lit");
         mainCameraTransform = FindAnyObjectByType<Camera>().transform;
         color = Random.ColorHSV(0, 1, 0.5f, 1, 0.75f, 1, 1, 1);
         playerMat = playerSprite.material;
@@ -99,6 +106,9 @@ public class Player : MonoBehaviour
             timer = RespawnTime / 3;
         }
         IsInitialized = true;
+
+        shiftTarget.GetComponent<MeshRenderer>().material = new Material(shiftTargetShader);
+        shiftTarget.GetComponent<MeshRenderer>().material.color = color;
     }
 
     // Update is called once per frame
@@ -123,6 +133,7 @@ public class Player : MonoBehaviour
     {
         if (Alive)
         {
+            
             RaycastHit hitground;
             if (Physics.SphereCast(transform.position, 0.4f, -transform.up * Orientation, out hitground, 1))
             {
@@ -211,6 +222,11 @@ public class Player : MonoBehaviour
                     newSprite.transform.position = transform.position;
                     ExitAnim = false;
                 }
+                shiftTarget.transform.position = new Vector3(0,-100,0);
+            }
+            else
+            {
+                shiftTarget.transform.position = new Vector3(transform.position.x, -transform.position.y, -30);
             }
 
 
@@ -230,6 +246,7 @@ public class Player : MonoBehaviour
         }
         else
         {
+            shiftTarget.transform.position = new Vector3(0, -100, -30);
             if (!exploded)
             {
                 GameObject DeathSplatEffect = GameObject.Instantiate(SplatEffect,FindAnyObjectByType<Camera>().transform);
